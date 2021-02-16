@@ -21,7 +21,7 @@ type Store = {
 
 const defaultStore = {items: new Array<CartType>(), currency: "USD", showCart: false};
 const defaultDispatch = {
-  toggleDisplay: () => {},
+  toggleCartDisplay: () => {},
   addItem: (productID: number) => {},
   removeItem: (productID: number) => {},
   increaseItem: (productID: number) => {},
@@ -49,8 +49,9 @@ const getActions = (store: Store) => {
     const items = store.items.slice()
     const productIndex = items.findIndex(i => i.productID === productID)
 
-    if (productIndex) {
-      store.setItems([...items.slice(0, productIndex), ...items.slice(productIndex + 1)])
+    if (productIndex > -1) {
+      items.splice(productIndex, 1)
+      store.setItems(items)
     }
   }
 
@@ -72,20 +73,21 @@ const getActions = (store: Store) => {
       if (item.productID !== productID) {
         return item
       }
+      const quantity = item.quantity
       return {
         ...item,
-        quantity: item.quantity - 1
+        quantity: quantity > 1 ? quantity - 1 : quantity
       }
     })
     store.setItems(items)
   }
-  const toggleDisplay = () => {
+  const toggleCartDisplay = () => {
     store.setShowCart(!store.showCart)
   }
 
   const selectCurrency = store.setCurrency
 
-  return { addItem, removeItem, increaseItem, decreaseItem, toggleDisplay, selectCurrency }
+  return { addItem, removeItem, increaseItem, decreaseItem, toggleCartDisplay, selectCurrency }
 };
 
 export const CartProvider = ({children, initialState}: Props) => {

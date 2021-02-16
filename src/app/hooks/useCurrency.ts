@@ -17,11 +17,12 @@ const fetchCurrencies = async () => {
 
 export const useCurrency = () => {
 
-  const { data } = useQuery("currencies", fetchCurrencies);
+  const { data, status } = useQuery("currencies", fetchCurrencies);
 
   const currencies = data?.currency || []
 
   return {
+    status,
     currencies,
   };
 };

@@ -4,20 +4,6 @@ import {useCartDispatch, useCartStore, CartType} from '../hooks/useCart';
 import { useProduct } from '../hooks/useProduct';
 
 const Container = styled.div`
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    min-height: inherit;
-    max-height: inherit;
-    -webkit-box-pack: justify;
-    justify-content: space-between;
-    position: relative;
-    margin-bottom: 20px;
-    background: #fff;
-`
-
-const ProductDescription = styled.div`
-  margin-top: 10px;
   display: flex;
   flex-wrap: wrap;
   min-height: inherit;
@@ -27,6 +13,16 @@ const ProductDescription = styled.div`
   position: relative;
   margin-bottom: 20px;
   background: #fff;
+`
+
+const ProductDescription = styled.div`
+  color: #1e2d2b;
+  width: 65%;
+  line-height: 18px;
+  font-size: 10px;
+  padding: 15px 13px 13px 21px;
+  letter-spacing: .02px;
+  min-height: 100px;
 `
 
 const RemoveButton = styled.span`
@@ -61,7 +57,19 @@ const Counter = styled.div`
   justify-content: space-between;
   -webkit-box-align: center;
   align-items: center;
+  background: #fff;
+
+  span {
+    cursor: pointer;
+    color: #000;
+    font-size: 15px;
+  }
+  div {
+    padding: 0 10px;
+    font-size: 13px;
+  }
 `
+
 const Price = styled.div`
   float: right;
   padding: 0 10px;
@@ -72,6 +80,7 @@ const Price = styled.div`
 
 const ImageWrapper = styled.div`
   background-color: #fdfdfd;
+  display: -webkit-box;
   display: flex;
   -webkit-box-pack: center;
   justify-content: center;
@@ -86,6 +95,7 @@ const Image = styled.img`
   overflow: hidden;
   height: 80px;
   width: auto;
+  -o-object-fit: contain;
   object-fit: contain;
 `
 
@@ -93,30 +103,30 @@ const CartItem = memo(({ cartItem }: { cartItem: CartType }) => {
   const { productID, quantity } = cartItem
   const { currency } = useCartStore();
   const { products } = useProduct(currency)
-  const { increaseItem, decreaseItem } = useCartDispatch();
+  const { increaseItem, decreaseItem, removeItem } = useCartDispatch();
   const cartProduct = products[productID] || {}
 
   const handleAdd = () => increaseItem(productID)
   const handleSubtract = () => decreaseItem(productID)
+  const handleRemove = () => removeItem(productID)
 
   return (
     <Container>
-      <RemoveButton>x</RemoveButton>
       <ProductDescription>
+        <RemoveButton onClick={handleRemove}>x</RemoveButton>
         <h6>{cartProduct.title}</h6>
-        <div><span>MADE FOR:</span>Demo</div>
-        <div>Combination</div>
-        <div><span>One time purchase of</span> Two Month <span>supply</span>.</div>
         <CounterWrapper>
           <Counter>
             <span onClick={handleSubtract} >-</span>
-            <span> {quantity} </span>
+            <div> {quantity} </div>
             <span onClick={handleAdd} >+</span>
           </Counter>
           <Price>{`${currency} ${String(cartProduct.price * quantity)}`}</Price>
         </CounterWrapper>
       </ProductDescription>
-      <ImageWrapper><Image alt="Product Image" src={cartProduct.image_url}/></ImageWrapper>
+      <ImageWrapper>
+        <Image alt="Product Image" src={cartProduct.image_url}/>
+      </ImageWrapper>
     </Container>
   );
 })

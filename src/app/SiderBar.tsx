@@ -2,7 +2,7 @@ import React, { memo, useMemo } from 'react';
 import styled from 'styled-components'
 import {useCartDispatch, useCartStore, CartType} from './hooks/useCart';
 import { useCurrency } from './hooks/useCurrency';
-import {CartItem} from './components';
+import {CartItem, TotalAmount} from './components';
 
 const Modal = styled.div<{ show: boolean; }>`
     z-index: 1200;
@@ -32,31 +32,30 @@ const Container = styled.div`
     flex-direction: column;
     overflow-x: auto;
     max-width: 550px;
-    -webkit-transition: opacity .4s ease-in-out .1s,-webkit-transform .4s cubic-bezier(.28,.47,.29,.86);
-    transition: opacity .4s ease-in-out .1s,-webkit-transform .4s cubic-bezier(.28,.47,.29,.86);
-    transition: transform .4s cubic-bezier(.28,.47,.29,.86),opacity .4s ease-in-out .1s;
-    transition: transform .4s cubic-bezier(.28,.47,.29,.86),opacity .4s ease-in-out .1s,-webkit-transform .4s cubic-bezier(.28,.47,.29,.86);
 `;
 
 const Button = styled.button`
-    width: 14px;
-    height: 14px;
+    justify-content: flex-start;
+    width: 30px;
+    height: 30px;
+    border: 1px solid gray;
+    border-radius: 50%
 `;
 
 const CrncyWrapper = styled.div`
-  margin-left: 20px;
   margin-right: 20px;
   margin-top: 10px;
+  margin-bottom: 10px;
 `
 
 const Crncy = styled.select`
-  padding: 8px 13px 5px 10px;
+  padding: 8px 10px 5px 10px;
   background-position: 100% 60%;
   cursor: pointer;
 `
 
 const SideBar = memo(() => {
-  const { toggleDisplay, selectCurrency } = useCartDispatch();
+  const { toggleCartDisplay, selectCurrency } = useCartDispatch();
   const { currency, items, showCart } = useCartStore();
   const { currencies } = useCurrency()
 
@@ -68,7 +67,7 @@ const SideBar = memo(() => {
   return (
     <Modal show={showCart}>
       <Container>
-        <Button onClick={toggleDisplay} >hide</Button>
+        <Button onClick={toggleCartDisplay} >{">"}</Button>
         <CrncyWrapper>
           <Crncy onChange={handleCurrencyChange}>
             {currencies.map((c: string)=> <option key={c} value={c} selected={String(currency) === c}>{c}</option>)}
@@ -77,6 +76,7 @@ const SideBar = memo(() => {
         {items.map((cartItem: CartType) =>
           <CartItem key={cartItem.productID} cartItem={cartItem} />
         )}
+        <TotalAmount />
       </Container>
     </Modal>
   );

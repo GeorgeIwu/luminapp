@@ -1,15 +1,29 @@
 import React, { memo } from 'react';
 import styled from 'styled-components'
 import { ProductType } from '../hooks/useProduct';
+import { useCartDispatch } from '../hooks/useCart';
 
 const Container = styled.div`
-  padding: 3rem 2rem;
-  width: 33.3333%;
-  flex-direction: column;
   display: flex;
+  flex-direction: column;
   text-align: center;
-  align-items: center;
+  position: relative;
+  align-items: center
   background: rgb(226, 230, 227);
+  padding: 2.5rem 0.5rem;
+  width: 50%;
+  @media (min-width: 768px) {
+    padding: 3rem 2rem;
+    width: 33.3%;
+  }
+`
+
+const Card = styled.div`
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  flex-direction: column;
+  flex: 1 1 0%;
 `
 
 const ImageWrapper = styled.div`
@@ -21,13 +35,16 @@ const ImageWrapper = styled.div`
 `
 
 const Image = styled.img`
-  object-fit: contain;
-  max-width: 100%;
-  max-height: 170px;
+  display: block;
   flex: 1 1 0%;
   height: auto;
-  display: block;
-  vertical-align: middle;
+  width: auto;
+  overflow: hidden;
+  -o-object-fit: contain;
+  object-fit: contain;
+  // vertical-align: middle;
+  max-width: 100%;
+  max-height: 170px;
 `
 
 const Title = styled.h2`
@@ -80,26 +97,36 @@ const Button = styled.button`
   width: 100%;
   max-width: 100%;
   white-space: normal;
+
+  &:hover {
+    background: #000;
+  }
 `
 
- const ProductItem = memo(({ product, currency, onAdd }: { product: ProductType, currency: string, onAdd: (product: number) => any }) => {
+ const ProductItem = memo(({ product, currency }: { product: ProductType, currency: string }) => {
 
   const title = product.title
   const imgSrc = product.image_url
   const amount = product.price
+  const { addItem, toggleCartDisplay } = useCartDispatch()
 
-  const handleAdd = () => onAdd(product.id)
+  const handleAdd = () => {
+    addItem(product.id)
+    toggleCartDisplay()
+  }
 
   return (
     <Container>
-      <ImageWrapper>
-        <Image alt={title} src={imgSrc} />
-        <Title>{title}</Title>
-      </ImageWrapper>
-      <AmountWrapper>
-        <Amount>{`From: ${currency} ${amount}`}</Amount>
-      </AmountWrapper>
-      <Button onClick={handleAdd} >Add to Cart</Button>
+      <Card>
+        <ImageWrapper>
+          <Image alt={title} src={imgSrc} />
+          <Title>{title}</Title>
+        </ImageWrapper>
+        <AmountWrapper>
+          <Amount>{`From: ${currency} ${amount}`}</Amount>
+        </AmountWrapper>
+        <Button onClick={handleAdd} >Add to Cart</Button>
+      </Card>
     </Container>
   );
 })

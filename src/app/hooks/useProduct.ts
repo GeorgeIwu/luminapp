@@ -38,11 +38,12 @@ const fetchProducts = async (args: any) => {
 
 export const useProduct = (currency: string = "NGN") => {
 
-  const { data } = useQuery(["products", currency], fetchProducts);
+  const { data, status } = useQuery(["products", currency], fetchProducts);
 
   const products = normalizeProducts(data?.products)
 
   return {
+    status,
     products,
   };
 };
